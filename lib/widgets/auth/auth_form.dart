@@ -1,12 +1,22 @@
+import 'package:fashion_connect/blocs/blocs.dart';
 import 'package:fashion_connect/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthForm extends StatefulWidget {
+  final LoginBloc loginBloc;
+  final AuthBloc authBloc;
+
+  const AuthForm({Key key, @required this.loginBloc, @required this.authBloc})
+      : super(key: key);
+
   @override
   _AuthFormState createState() => _AuthFormState();
 }
 
 class _AuthFormState extends State<AuthForm> {
+  LoginBloc get _loginBloc => widget.loginBloc;
+
   AuthMode _authMode = AuthMode.Login;
 
   Map<String, dynamic> _formData = {'username': null, 'password': null};
@@ -75,13 +85,14 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
-  Widget _buildLoginControl({@required BuildContext context}) {
+  Widget _buildLoginControl(
+      {@required BuildContext context, @required LoginState state}) {
     return Expanded(
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(10.0),
         child: InkWell(
-          onTap: submitForm,
+          onTap: state is! LoginLoading ? submitForm : null,
           child: Container(
             height: 40.0,
             alignment: Alignment.center,
@@ -91,11 +102,13 @@ class _AuthFormState extends State<AuthForm> {
                 Radius.circular(10.0),
               ),
             ),
-            child: Text(_authMode == AuthMode.Login ? 'Login' : 'Sign Up',
-                style: TextStyle(
-                    color: Theme.of(context).accentColor,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold)),
+            child: state is LoginLoading
+                ? CircularProgressIndicator()
+                : Text(_authMode == AuthMode.Login ? 'Login' : 'Sign Up',
+                    style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold)),
           ),
         ),
       ),
@@ -108,6 +121,12 @@ class _AuthFormState extends State<AuthForm> {
     }
 
     _formKey.currentState.save();
+    _loginBloc.onLoginButtonPressed(
+      username: _formData['username'],
+      password: _formData['password'],
+      authMode: _authMode,
+    );
+
     print('${_formData['username']}, ${_formData['password']}');
   }
 
@@ -153,7 +172,7 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
-  Widget _pageContent() {
+  Widget _pageContent({@required LoginState state}) {
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -218,7 +237,8 @@ class _AuthFormState extends State<AuthForm> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  _buildLoginControl(context: context),
+                                  _buildLoginControl(
+                                      context: context, state: state),
                                 ],
                               ),
                             ],
@@ -237,8 +257,34 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
+  void _onWidgetDidBuild(Function callback) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      callback();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _pageContent();
+    void _buildErrorSnackbar({@required String error}) {
+      _onWidgetDidBuild(() {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$error'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      });
+    }
+
+    return BlocBuilder<LoginEvent, LoginState>(
+      bloc: _loginBloc,
+      builder: (BuildContext context, LoginState state) {
+        if (state is LoginFailure) {
+          _buildErrorSnackbar(error: state.error);
+        }
+        
+        return _pageContent(state: state);
+      },
+    );
   }
 }

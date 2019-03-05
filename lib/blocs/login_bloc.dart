@@ -61,6 +61,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   LoginState get initialState => LoginInitial();
 
+  void onLoginButtonPressed(
+      {@required String username,
+      @required String password,
+      @required AuthMode authMode}) {
+    dispatch(LoginButtonPressed(
+        username: username, password: password, authMode: authMode));
+  }
+
   @override
   Stream<LoginState> mapEventToState(
       LoginState currentState, LoginEvent event) async* {
@@ -73,7 +81,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             username: event.username,
             password: event.password);
 
-            print(userToken);
+        print(userToken);
 
         final _user = User(
             uid: event.password,
