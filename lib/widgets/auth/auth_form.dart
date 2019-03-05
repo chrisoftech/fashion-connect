@@ -116,6 +116,7 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void submitForm() {
+    FocusScope.of(context).requestFocus(FocusNode());
     if (!_formKey.currentState.validate()) {
       return;
     }
