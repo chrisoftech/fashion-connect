@@ -7,9 +7,9 @@ import 'package:bloc/bloc.dart';
 // AUTHETICATION STATES
 abstract class AuthState extends Equatable {}
 
-class AuthUnInitialized extends AuthState {
+class AuthUninitialized extends AuthState {
   @override
-  String toString() => 'AuthUnInitialized';
+  String toString() => 'AuthUninitialized';
 }
 
 class AuthAuthenticated extends AuthState {
@@ -58,7 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({@required this.authRepository}) : assert(authRepository != null);
 
   @override
-  AuthState get initialState => AuthUnInitialized();
+  AuthState get initialState => AuthUninitialized();
 
   void onAppStart() {
     dispatch(AppStarted());
