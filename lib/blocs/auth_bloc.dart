@@ -86,15 +86,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (event is LoggedIn) {
-      yield AuthLoading();
+      yield AuthLoading();     
 
-      final _user = User(
-          uid: '123456',
-          username: '0270747772',
-          imageUrl: 'imageUrl',
-          userRight: 'admin');
-
-      await authRepository.persistUser(user: _user);
+      await authRepository.persistUser(user: event.user);
       yield AuthAuthenticated();
     }
 
