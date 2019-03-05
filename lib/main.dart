@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'QuickSand',
         brightness: Brightness.dark,
         primarySwatch: Colors.indigo,
         accentColor: Colors.yellow[700],
