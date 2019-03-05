@@ -131,7 +131,8 @@ class _AuthFormState extends State<AuthForm> {
     print('${_formData['username']}, ${_formData['password']}');
   }
 
-  Widget _buildAuthModeControl(BuildContext context) {
+  Widget _buildAuthModeControl(
+      {@required BuildContext context, LoginState state}) {
     return Container(
       height: 50.0,
       width: 300,
@@ -148,25 +149,31 @@ class _AuthFormState extends State<AuthForm> {
           children: <Widget>[
             Text(
               _authMode == AuthMode.Login
-                  ? 'Not registered account yet?'
+                  ? 'Don\'t have an account yet?'
                   : 'Already have an account?',
               style: TextStyle(color: Theme.of(context).primaryColorLight),
             ),
-            SizedBox(width: 10.0),
+            // SizedBox(width: 10.0),
             GestureDetector(
-                child: Text(_authMode == AuthMode.Login ? 'Sign Up' : 'Login',
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-                onTap: () {
-                  setState(() {
-                    _authMode == AuthMode.Login
-                        ? _authMode = AuthMode.SignUp
-                        : _authMode = AuthMode.Login;
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  child: Text(_authMode == AuthMode.Login ? 'Sign Up' : 'Login',
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold)),
+                ),
+                onTap: state is LoginLoading
+                    ? null
+                    : () {
+                        setState(() {
+                          _authMode == AuthMode.Login
+                              ? _authMode = AuthMode.SignUp
+                              : _authMode = AuthMode.Login;
 
-                    _formKey.currentState.reset();
-                    _passwordController.text = '';
-                  });
-                })
+                          _formKey.currentState.reset();
+                          _passwordController.text = '';
+                        });
+                      })
           ],
         ),
       ),
@@ -247,7 +254,7 @@ class _AuthFormState extends State<AuthForm> {
                         ),
                       ),
                     ),
-                    _buildAuthModeControl(context),
+                    _buildAuthModeControl(context: context, state: state),
                   ],
                 ),
               ),
@@ -283,7 +290,7 @@ class _AuthFormState extends State<AuthForm> {
         if (state is LoginFailure) {
           _buildErrorSnackbar(error: state.error);
         }
-        
+
         return _pageContent(state: state);
       },
     );
