@@ -58,7 +58,8 @@ class _MyAppState extends State<MyApp> {
         accentColor: Colors.yellow[700],
       ),
       routes: <String, WidgetBuilder>{
-        '/admin-dashboard': (BuildContext context) => AdminDashboard()
+        '/admin-dashboard': (BuildContext context) => AdminDashboardPage(),
+        '/admin-categories': (BuildContext context) => AdminCategoriesPage()
       },
       home: BlocBuilder<AuthEvent, AuthState>(
         bloc: _authBloc,

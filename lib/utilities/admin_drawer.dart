@@ -1,5 +1,4 @@
 import 'package:fashion_connect/blocs/auth_bloc.dart';
-import 'package:fashion_connect/utilities/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -85,7 +84,7 @@ class AdminDrawer extends StatelessWidget {
                         _buildDrawerListTile(
                             icon: Icons.category,
                             title: 'Categories',
-                            route: '',
+                            route: '/admin-categories',
                             navigatorPushReplacement: true),
                         _buildDrawerListTile(
                             icon: Icons.store,
