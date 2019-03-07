@@ -1,4 +1,7 @@
+import 'package:fashion_connect/utilities/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:flutter/services.dart';
 
 class AdminCategoryForm extends StatefulWidget {
   @override
@@ -10,6 +13,9 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
     'title': null,
     'description': null,
   };
+
+  List<Asset> images = List<Asset>();
+  String _error;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -75,6 +81,79 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
     );
   }
 
+  Widget _buildCategoryImage() {
+    if (images.length < 1) {
+      return Image.asset(
+        'assets/placeholder/placeholder.png',
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: buildGridView(),
+          ),
+        ],
+      );
+    }
+  }
+
+  Future<void> loadAssets() async {
+    setState(() {
+      images = List<Asset>();
+    });
+
+    List<Asset> resultList;
+    String error;
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+      );
+    } on PlatformException catch (e) {
+      error = e.message;
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      images = resultList;
+      if (error == null) _error = 'No Error Dectected';
+    });
+  }
+
+  int get _buildCrossAxisCount {
+    if (images.length == 1) {
+      return 1;
+    } else if (images.length == 2) {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
+
+  int get preferredSizeFromHeight {
+    if (images.length <= 1) {
+      return 200;
+    } else if (images.length == 2) {
+      return 150;
+    } else {
+      return 100;
+    }
+  }
+
+  Widget buildGridView() {
+    return GridView.count(
+      crossAxisCount: 1,
+      children: List.generate(images.length, (index) {
+        return AssetView(index, images[index]);
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -82,10 +161,7 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
         SliverAppBar(
           pinned: true,
           floating: true,
-          flexibleSpace: Image.asset(
-            'assets/placeholder/placeholder.png',
-            fit: BoxFit.cover,
-          ),
+          flexibleSpace: _buildCategoryImage(),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(200.0),
             child: Container(
@@ -102,7 +178,7 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
                     child: IconButton(
                       icon: Icon(Icons.add_a_photo,
                           size: 35.0, color: Theme.of(context).accentColor),
-                      onPressed: () {},
+                      onPressed: loadAssets,
                     ),
                   ),
                 ],
@@ -120,6 +196,7 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
                   child: Column(
                     children: <Widget>[
                       _buildLabelText(title: 'Category Details'),
+                      SizedBox(height: 20.0),
                       _buildTitleTextField(),
                       SizedBox(height: 20.0),
                       _buildDescriptionTextField(),
