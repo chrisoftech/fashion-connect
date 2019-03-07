@@ -1,9 +1,9 @@
-import 'package:fashion_connect/blocs/blocs.dart';
+import 'package:fashion_connect/blocs/auth_bloc.dart';
 import 'package:fashion_connect/utilities/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SideDrawer extends StatelessWidget {
+class AdminDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthBloc _authBloc = BlocProvider.of<AuthBloc>(context);
@@ -16,10 +16,6 @@ class SideDrawer extends StatelessWidget {
         title: Text(
           'MENU',
           style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w900),
-        ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(210.0),
-          child: DrawerProfile(),
         ),
       );
     }
@@ -47,6 +43,7 @@ class SideDrawer extends StatelessWidget {
               if (signout) {
                 Navigator.of(context).pop();
                 _authBloc.onLoggedOut();
+                Navigator.of(context).pushReplacementNamed('/');
               } else {
                 if (route.isEmpty) {
                   return;
@@ -77,12 +74,24 @@ class SideDrawer extends StatelessWidget {
                         _buildDrawerListTile(
                             icon: Icons.timeline,
                             title: 'Timeline',
-                            route: '',
-                            addDivider: true),
+                            route: '/',
+                            addDivider: true,
+                            navigatorPushReplacement: true),
                         _buildDrawerListTile(
-                            icon: Icons.dashboard,
-                            title: 'Admin Dashboard',
-                            route: '/admin-dashboard',
+                            icon: Icons.supervisor_account,
+                            title: 'Accounts',
+                            route: '',
+                            navigatorPushReplacement: true),
+                        _buildDrawerListTile(
+                            icon: Icons.category,
+                            title: 'Categories',
+                            route: '',
+                            navigatorPushReplacement: true),
+                        _buildDrawerListTile(
+                            icon: Icons.store,
+                            title: 'Products',
+                            route: '',
+                            addDivider: true,
                             navigatorPushReplacement: true),
                         _buildDrawerListTile(
                             icon: Icons.graphic_eq,

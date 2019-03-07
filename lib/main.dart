@@ -57,6 +57,9 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.indigo,
         accentColor: Colors.yellow[700],
       ),
+      routes: <String, WidgetBuilder>{
+        '/admin-dashboard': (BuildContext context) => AdminDashboard()
+      },
       home: BlocBuilder<AuthEvent, AuthState>(
         bloc: _authBloc,
         builder: (BuildContext context, AuthState state) {
