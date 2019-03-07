@@ -59,7 +59,8 @@ class _MyAppState extends State<MyApp> {
       ),
       routes: <String, WidgetBuilder>{
         '/admin-dashboard': (BuildContext context) => AdminDashboardPage(),
-        '/admin-categories': (BuildContext context) => AdminCategoriesPage()
+        '/admin-categories': (BuildContext context) => AdminCategoriesPage(),
+        '/admin-category-form': (BuildContext context) => AdminCategoryFormPage(),
       },
       home: BlocBuilder<AuthEvent, AuthState>(
         bloc: _authBloc,

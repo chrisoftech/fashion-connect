@@ -14,7 +14,7 @@ class _AdminCategoriesState extends State<AdminCategoriesPage> {
         Icons.add,
         size: 35.0,
       ),
-      onPressed: () {},
+      onPressed: () => Navigator.of(context).pushNamed('/admin-category-form'),
     );
   }
 
