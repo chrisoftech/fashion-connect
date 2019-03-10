@@ -62,6 +62,11 @@ class CategoryFormBloc extends Bloc<CategoryFormEvent, CategoryFormState> {
     super.onTransition(transition);
   }
 
+  void onCategoryFormSubmit(
+      {@required String title, @required String description}) {
+    dispatch(CategoryFormSubmit(title: title, description: description));
+  }
+
   @override
   CategoryFormState get initialState => CategoryFormInitial();
 

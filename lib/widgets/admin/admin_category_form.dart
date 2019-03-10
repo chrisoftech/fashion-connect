@@ -90,9 +90,7 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
     } else {
       return Column(
         children: <Widget>[
-          Expanded(
-            child: buildGridView(),
-          ),
+          Expanded(child: AssetView(0, images[0]))
         ],
       );
     }
@@ -125,34 +123,14 @@ class _AdminCategoryFormState extends State<AdminCategoryForm> {
     });
   }
 
-  int get _buildCrossAxisCount {
-    if (images.length == 1) {
-      return 1;
-    } else if (images.length == 2) {
-      return 2;
-    } else {
-      return 3;
-    }
-  }
-
-  int get preferredSizeFromHeight {
-    if (images.length <= 1) {
-      return 200;
-    } else if (images.length == 2) {
-      return 150;
-    } else {
-      return 100;
-    }
-  }
-
-  Widget buildGridView() {
-    return GridView.count(
-      crossAxisCount: 1,
-      children: List.generate(images.length, (index) {
-        return AssetView(index, images[index]);
-      }),
-    );
-  }
+  // Widget buildGridView() {
+  //   return GridView.count(
+  //     crossAxisCount: 1,
+  //     children: List.generate(images.length, (index) {
+  //       return AssetView(index, images[index]);
+  //     }),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
