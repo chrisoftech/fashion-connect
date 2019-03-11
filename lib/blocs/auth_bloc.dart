@@ -5,7 +5,9 @@ import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 
 // AUTHETICATION STATES
-abstract class AuthState extends Equatable {}
+abstract class AuthState extends Equatable {
+  AuthState([List props = const []]) : super(props);
+}
 
 class AuthUninitialized extends AuthState {
   @override
@@ -13,8 +15,12 @@ class AuthUninitialized extends AuthState {
 }
 
 class AuthAuthenticated extends AuthState {
+  final AuthMode authMode;
+
+  AuthAuthenticated({@required this.authMode}) : super([authMode]);
+
   @override
-  String toString() => 'AuthAuthenticated';
+  String toString() => 'AuthAuthenticated: { authMode: $authMode }';
 }
 
 class AuthUnauthenticated extends AuthState {
@@ -39,11 +45,14 @@ class AppStarted extends AuthEvent {
 
 class LoggedIn extends AuthEvent {
   final User user;
+  final AuthMode authMode;
 
-  LoggedIn({@required this.user}) : super([user]);
+  LoggedIn({@required this.user, @required this.authMode})
+      : super([user, authMode]);
 
   @override
-  String toString() => '{ user: ${user.toString()} }';
+  String toString() =>
+      '{ user: ${user.toString()}, authMode: ${authMode.toString} }';
 }
 
 class LoggedOut extends AuthEvent {
@@ -64,8 +73,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     dispatch(AppStarted());
   }
 
-  void onLoggedIn({@required User user}) {
-    dispatch(LoggedIn(user: user));
+  void onLoggedIn({@required User user, @required AuthMode authMode}) {
+    dispatch(LoggedIn(user: user, authMode: authMode));
   }
 
   void onLoggedOut() {
@@ -79,17 +88,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final bool isAuthenticated = await authRepository.isAuthenticated();
 
       if (isAuthenticated) {
-        yield AuthAuthenticated();
+        yield AuthAuthenticated(authMode: AuthMode.SignUp);
       } else {
         yield AuthUnauthenticated();
       }
     }
 
     if (event is LoggedIn) {
-      yield AuthLoading();     
+      yield AuthLoading();
 
       await authRepository.persistUser(user: event.user);
-      yield AuthAuthenticated();
+      yield AuthAuthenticated(authMode: event.authMode);
     }
 
     if (event is LoggedOut) {

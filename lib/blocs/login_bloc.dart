@@ -89,7 +89,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             imageUrl: 'imageUrl',
             userRight: 'admin');
 
-        authBloc.onLoggedIn(user: _user);
+        authBloc.onLoggedIn(user: _user, authMode: event.authMode);
         yield LoginInitial();
       } catch (e) {
         yield LoginFailure(error: e.toString());

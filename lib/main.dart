@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:fashion_connect/blocs/blocs.dart';
+import 'package:fashion_connect/models/models.dart';
 import 'package:fashion_connect/modules/modules.dart';
 import 'package:fashion_connect/repositories/repositories.dart';
 import 'package:fashion_connect/utilities/utilities.dart';
@@ -60,7 +61,8 @@ class _MyAppState extends State<MyApp> {
       routes: <String, WidgetBuilder>{
         '/admin-dashboard': (BuildContext context) => AdminDashboardPage(),
         '/admin-categories': (BuildContext context) => AdminCategoriesPage(),
-        '/admin-category-form': (BuildContext context) => AdminCategoryFormPage(),
+        '/admin-category-form': (BuildContext context) =>
+            AdminCategoryFormPage(),
       },
       home: BlocBuilder<AuthEvent, AuthState>(
         bloc: _authBloc,
@@ -70,7 +72,10 @@ class _MyAppState extends State<MyApp> {
           }
 
           if (state is AuthAuthenticated) {
-            return HomePage();
+            if (state.authMode == AuthMode.SignUp) {
+              return SignUpWizardPage();
+            } else
+              return HomePage();
           }
 
           if (state is AuthUnauthenticated) {
